@@ -74,6 +74,8 @@ nnoremap <leader><s-w> :set wrap!<cr>
 "\ && b:NERDTree.isTabTree())
 "\ | q | endif " Automatically close vim if NERDTree is only buffer left
 "autocmd VimEnter * NERDTree " Automatically start NERDTree on open
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists(“s:std_in”) | NERDTree | endif
 "let g:NERDTreeWinSize=40
 "map <leader>n :NERDTreeToggle<CR>
 "map <leader><s-n> :NERDTreeFind<CR>
@@ -218,6 +220,8 @@ noremap <leader>q :q<CR>
 noremap <leader>w :w<CR>
 noremap <leader>e :edit!<CR>
 noremap <leader><s-e> :edit!<CR>
+noremap <leader>h <C-W>h<C-W>_
+noremap <leader>l <C-W>l<C-W>_
 
 """"""""""""""""""""
 """ Resizing Windows
