@@ -34,6 +34,7 @@ alias gpu='git push --set-upstream origin'
 alias nb='git checkout -b'
 alias get='mix deps.get'
 alias env='source .env'
+alias cdr='foo(){ cd ~/repos/"$1"}; foo 
 
 gmm(){
   git checkout master
