@@ -1,17 +1,15 @@
 filetype off
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/comprc/.vim/plugged')
 
-"Plug 'scrooloose/nerdtree' " Directory structure
-"Plug 'Xuyuanp/nerdtree-git-plugin' " Git integration with nerdtree
 Plug 'ryanoasis/vim-devicons' " dev icons for vim
 Plug 'rbgrouleff/bclose.vim'
 Plug 'francoiscabrol/ranger.vim' " Ranger
 Plug 'tpope/vim-vinegar' " Vinegar
 Plug 'itchyny/lightline.vim' " File info at bottom of vim
-Plug 'SirVer/ultisnips' " Snippet Engine
-Plug 'honza/vim-snippets' " Group of snippets
+
 Plug 'elixir-editors/vim-elixir' " Elixir support for vim
+
 "Plug 'slashmili/alchemist.vim' " Elixir support for vim
 Plug 'scrooloose/nerdcommenter' " Comment support
 Plug 'pangloss/vim-javascript' " Javascript support for vim
@@ -32,6 +30,20 @@ Plug 'kana/vim-submode' " submode
 Plug 'w0rp/ale' " Async Linting
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'terryma/vim-multiple-cursors' " Multi Cursors
+Plug 'Chiel92/vim-autoformat'
+Plug 'maximbaz/lightline-ale'
+Plug 'MattesGroeger/vim-bookmarks'
+Plug 'delphinus/lightline-delphinus'
+Plug 'tpope/vim-endwise'
+
+"Language Server
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+Plug 'junegunn/fzf'
+
+let g:rg_command = 'rg --vimgrep -S'
 
 call plug#end()
 
@@ -59,27 +71,7 @@ nnoremap <leader><s-w> :set wrap!<cr>
 "set nofoldenable " Enables code folding
 "set foldmethod=syntax
 "set foldlevel=1
-
-"""""""""""""""""
-""" Nerd Tree
-"""""""""""""""""
-"let NERDTreeMapOpenSplit='<C-x>'
-"let NERDTreeMapOpenVSplit='<C-v>'
-"let NERDTreeMapOpenInTab='<C-t>'
-"let g:NERDTreeMapJumpPrevSibling="" " To allow tmux/vim navigation
-"let g:NERDTreeMapJumpNextSibling="" " To allow tmux/vim navigation
-"let NERDTreeShowHidden=1 " Display ignored files in NERDTree
-"autocmd bufenter * if (winnr("$") == 1
-"\ && exists("b:NERDTree")
-"\ && b:NERDTree.isTabTree())
-"\ | q | endif " Automatically close vim if NERDTree is only buffer left
-"autocmd VimEnter * NERDTree " Automatically start NERDTree on open
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists(“s:std_in”) | NERDTree | endif
-"let g:NERDTreeWinSize=40
-"map <leader>n :NERDTreeToggle<CR>
-"map <leader><s-n> :NERDTreeFind<CR>
-
+set statusline=%{FugitiveStatusline()}
 """""""""""""""""
 """ Ranger
 """""""""""""""""
@@ -91,6 +83,10 @@ noremap <leader>n :RangerWorkingDirectory<CR>
 noremap <leader><s-n> :RangerCurrentFile<CR>
 "noremap <leader>t :RangerWorkingDirectoryNewTab<CR>
 "noremap <leader><s-t> :RangerCurrentFileNewTab<CR>
+noremap <leader>g :tabnew %<CR>
+noremap <leader><s-g> :wq<CR>
+
+noremap <leader>o :e#<CR>
 
 """"""""""""""""""""
 """ Netrw
@@ -101,6 +97,8 @@ noremap <leader>\ :vsplit .<CR>
 noremap <leader>d :e .<CR>
 noremap <leader>- :split .<CR>
 noremap <leader>t :tabf .<CR>
+noremap <leader>y :tabp .<CR>
+noremap <leader>s :tabn .<CR>
 noremap <leader>\| :vsplit %:h/<CR>
 noremap <leader>_ :split %:h/<CR>
 noremap <leader><s-d> :E<CR>
@@ -132,6 +130,7 @@ let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l ""'
 " For Ag full text search
 " Default options are --nogroup --column --color
 let s:ag_options = ' --hidden '
+let g:ag_working_path_mode="r"
 
 let g:fzf_action = {
 			\ 'ctrl-t': 'tab split',
@@ -146,8 +145,17 @@ noremap <leader>p :Files<CR>
 " Open file finder full screen
 noremap <leader><s-p> :Files!<CR>
 " Ag search full-screen
-noremap <leader>f :Ag<CR>
+noremap <leader>v :Gdiffsplit<CR>
+
+"Bookmarks
+highlight BookmarkSign ctermbg=NONE ctermfg=160
+highlight BookmarkLine ctermbg=194 ctermfg=NONE
+let g:bookmark_sign = '♥'
+let g:bookmark_highlight_lines = 1
+let g:bookmark_show_toggle_warning = 0
+
 " Ag search
+noremap <leader>f :Ag<CR>
 noremap <leader><s-f> :Ag!<CR>
 command! -bang -nargs=* Ag
 			\ call fzf#vim#ag(<q-args>,
@@ -162,18 +170,8 @@ command! -bang -nargs=* Files
 			\           : fzf#vim#with_preview('right:50%:hidden', '?'),
 			\   <bang>0) "Ag will show file names with a preview
 
-"""""""""""""""""
-""" Lightline
-"""""""""""""""""
-let g:lightline = {
-			\ 'component_function': {
-			\   'filename': 'LightLineFilename'
-			\ }
-			\ }
-function! LightLineFilename()
-	return expand('%')
-endfunction
-set laststatus=2 " always enable lightline even if nerdtree isn't toggled
+
+
 
 """"""""""""""""
 "" Linting
@@ -186,9 +184,68 @@ set laststatus=2 " always enable lightline even if nerdtree isn't toggled
 "call cursor(l, c)
 "endfunction
 "autocmd BufWritePre * :call TrimWhiteSpace() " Trim trailing spaces on save
+"
+" Required, tell ALE where to find Elixir LS
+let g:ale_elixir_elixir_ls_release = expand("~/elixir-ls/release")
+let g:ale_fixers = {'elixir': ['mix_format'], 'javascript': ['prettier', 'eslint'], 'ruby': ['rubocop'], '*': ['remove_trailing_lines', 'trim_whitespace']}
+let g:ale_linters = {'elixir': ['elixir-ls', 'credo', 'dogma']}
+
 let g:ale_sign_column_always = 1
 let g:ale_fix_on_save = 1
-let g:ale_fixers = {'elixir': ['mix_format'], 'javascript': ['prettier', 'eslint'], 'ruby': ['rubocop']}
+let g:ale_lint_on_save = 1
+
+"Required, explicitly enable Elixir LS
+let g:ale_linters.elixir = ['elixir-ls', 'credo', 'dogma']
+
+" Keep this disabled
+let g:ale_elixir_elixir_ls_config = {'elixirLS': {'dialyzerEnabled': v:false}}
+
+" Optional, configure as-you-type completions
+set completeopt=menu,menuone,preview,noselect,noinsert
+let g:ale_completion_enabled = 1
+
+
+"""""""""""""""""
+""" Lightline
+"""""""""""""""""
+
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+			\		'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ]]
+      \ },
+			\ 'component_function': {
+			\   'filename': 'LightLineFilename',
+      \   'gitbranch': 'FugitiveHead'
+			\ },
+			\ 'component_expand': {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_infos': 'lightline#ale#infos',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ },
+			\	'component_type': {
+      \     'linter_checking': 'right',
+      \     'linter_infos': 'right',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'right',
+      \ }
+			\ }
+function! LightLineFilename()
+	return expand('%')
+endfunction
+set laststatus=2 " always enable lightline even if nerdtree isn't toggled
+
+
+"""""""""""""""""
+""" Lightline Delphinus
+"""""""""""""""""
+let g:lightline_delphinus_use_nerd_fonts_glyphs='true'
+
 
 """"""""""""""""""
 """" Navigation
@@ -250,6 +307,7 @@ au FileType elixir call s:elixir_test_bindings()
 function! s:elixir_test_bindings()
 	nnoremap <buffer> <Leader>a :execute "!clear && mix test %\\:" . line(".")<CR>
 	nnoremap <buffer> <Leader><s-a> :execute "!clear && mix test %"<CR>
+	nnoremap <buffer> <Leader>, :execute "!clear && mix format %"<CR>
 endfunction
 " Ruby
 au FileType ruby call s:ruby_test_bindings()
@@ -291,4 +349,3 @@ let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
 let g:multi_cursor_exit_from_visual_mode=0
 let g:multi_cursor_exit_from_insert_mode=0
-

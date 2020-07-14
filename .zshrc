@@ -11,7 +11,6 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="▶ "
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time)
 
 
 
@@ -30,8 +29,6 @@ alias d="docker"
 alias dprune="docker system prune -a --volumes"
 
 alias ls='ls -GF'
-alias gpu='git push --set-upstream origin'
-alias nb='git checkout -b'
 alias get='mix deps.get'
 alias env='source .env'
 alias cdr='foo(){ cd ~/repos/"$1"}; foo' 
@@ -55,6 +52,8 @@ alias co="git checkout"
 alias gs="git status"
 alias gpm="git pull origin master"
 alias gp="git pull"
+alias gpu='git push --set-upstream origin'
+alias nb='git checkout -b'
 
 
 #Podium Aliases
@@ -102,7 +101,6 @@ magic(){
 	iex -S mix phx.server
 }
 kazaam(){
-	code .
 	cdr kazaam
 	git pull
 	yarn install
@@ -152,6 +150,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+export TERM="xterm-256color" 
 export PATH="/usr/local/opt/curl/bin:$PATH"
 source /Users/alexwalz/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
