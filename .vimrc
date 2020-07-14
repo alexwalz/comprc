@@ -147,12 +147,22 @@ noremap <leader><s-p> :Files!<CR>
 " Ag search full-screen
 noremap <leader>v :Gdiffsplit<CR>
 
+
+"""""""""""""""""
 "Bookmarks
+"""""""""""""""""
+let g:bookmark_sign = '🔖'
+let g:bookmark_annotation_sign = '💬'
+
 highlight BookmarkSign ctermbg=NONE ctermfg=160
 highlight BookmarkLine ctermbg=194 ctermfg=NONE
-let g:bookmark_sign = '♥'
+
+highlight BookmarkAnnotationSign ctermbg=NONE ctermfg=33
+highlight BookmarkAnnotationLine ctermbg=33 ctermfg=NONE
+
 let g:bookmark_highlight_lines = 1
 let g:bookmark_show_toggle_warning = 0
+let g:bookmark_location_list = 1 " Use the location list to show all bookmarks
 
 " Ag search
 noremap <leader>f :Ag<CR>
