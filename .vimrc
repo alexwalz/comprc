@@ -14,6 +14,8 @@ Plug 'elixir-editors/vim-elixir' " Elixir support for vim
 Plug 'scrooloose/nerdcommenter' " Comment support
 Plug 'pangloss/vim-javascript' " Javascript support for vim
 Plug 'mxw/vim-jsx' " Jsx support for vim
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'chemzqm/vim-jsx-improve'
 Plug 'mattn/emmet-vim' " Html expansion
 Plug 'tpope/vim-fugitive' " Vim git integration
 Plug 'airblade/vim-gitgutter' " Vim gutter integration
@@ -44,6 +46,7 @@ Plug 'autozimu/LanguageClient-neovim', {
 Plug 'junegunn/fzf'
 
 let g:rg_command = 'rg --vimgrep -S'
+let g:jsx_ext_required = 0 "Allow JSX in normal js file
 
 call plug#end()
 
@@ -52,6 +55,7 @@ call plug#end()
 """""""""""""""""
 syntax on
 colorscheme onedark " theme
+
 set re=1 " This uses a different regex engine more suited for ruby
 let mapleader = "\<Space>"
 set clipboard=unnamed "Use system clipboard
